@@ -12,6 +12,8 @@ const packagingWork = path.join(workspaceRoot, 'work', 'buji-packaging');
 const stage = path.join(packagingWork, 'stage');
 const packageOutput = path.join(packagingWork, 'packages');
 const deliverable = path.join(workspaceRoot, 'outputs', 'BujiV1');
+const sourceCopyOptions = { recursive: true,
+  filter: filename => path.basename(filename) !== '__pycache__' && !filename.endsWith('.pyc') };
 for (const candidate of [stage, packageOutput]) {
   if (!candidate.toLowerCase().startsWith(path.join(workspaceRoot, 'work').toLowerCase() + path.sep))
     throw new Error('Packaging path is outside this workspace: ' + candidate);
@@ -58,8 +60,8 @@ await fs.cp(directories[0], destination, { recursive: true });
 const source = path.join(deliverable, 'source'); await fs.mkdir(source, { recursive: true });
 if (path.resolve(root) !== path.resolve(source))
   for (const name of ['src', 'tests', 'assets', 'tools', 'docs', '.github', '.gitignore', '.gitattributes', 'LICENSE', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'CHANGELOG.md', 'ROADMAP.md', 'THIRD_PARTY_NOTICES.md', 'package.json', 'package-lock.json', 'build.mjs', 'package.mjs'])
-    await fs.cp(path.join(root, name), path.join(source, name), { recursive: true });
+    await fs.cp(path.join(root, name), path.join(source, name), sourceCopyOptions);
 await fs.writeFile(path.join(deliverable, 'Start-Buji.cmd'), '@echo off\r\nstart "" "%~dp0app\\Buji.exe"\r\n');
 for (const name of ['docs', 'tools', 'LICENSE', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'CHANGELOG.md', 'ROADMAP.md', 'THIRD_PARTY_NOTICES.md'])
-  await fs.cp(path.join(root, name), path.join(deliverable, name), { recursive: true });
+  await fs.cp(path.join(root, name), path.join(deliverable, name), sourceCopyOptions);
 console.log('Ready:', path.join(destination, 'Buji.exe'));
