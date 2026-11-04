@@ -1,0 +1,43 @@
+{
+  "allPassed": true,
+  "backend": "real Qwen3 Personal WSP",
+  "results": [
+    {
+      "name": "desktop boot and local model connection",
+      "passed": true
+    },
+    {
+      "name": "real model created a project file",
+      "passed": true
+    },
+    {
+      "name": "approved command ran with exit code 0",
+      "passed": true
+    },
+    {
+      "name": "editor saved real file contents",
+      "passed": true
+    },
+    {
+      "name": "review diff and undo restored original agent edit",
+      "passed": true
+    },
+    {
+      "name": "chat history and settings survived app restart",
+      "passed": true
+    },
+    {
+      "name": "packaged app resolves the installed model launcher",
+      "passed": true
+    },
+    {
+      "name": "archived chats can be restored without losing history",
+      "passed": true
+    },
+    {
+      "name": "native image attachment reaches the real vision model",
+      "passed": true
+    }
+  ],
+  "configuration": "Packaged Buji V1 Windows x64 with the real local Qwen3 Personal WSP backend"
+}

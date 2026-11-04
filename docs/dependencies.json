@@ -1,0 +1,230 @@
+[
+  {
+    "name": "@codemirror/autocomplete",
+    "version": "6.20.4",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/codemirror/autocomplete.git"
+  },
+  {
+    "name": "@codemirror/commands",
+    "version": "6.11.1",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/codemirror/commands.git"
+  },
+  {
+    "name": "@codemirror/lang-css",
+    "version": "6.3.1",
+    "license": "MIT",
+    "repository": "https://github.com/codemirror/lang-css.git"
+  },
+  {
+    "name": "@codemirror/lang-html",
+    "version": "6.4.12",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/codemirror/lang-html.git"
+  },
+  {
+    "name": "@codemirror/lang-javascript",
+    "version": "6.2.5",
+    "license": "MIT",
+    "repository": "git+https://github.com/codemirror/lang-javascript.git"
+  },
+  {
+    "name": "@codemirror/lang-json",
+    "version": "6.0.2",
+    "license": "MIT",
+    "repository": "https://github.com/codemirror/lang-json.git"
+  },
+  {
+    "name": "@codemirror/lang-python",
+    "version": "6.2.1",
+    "license": "MIT",
+    "repository": "https://github.com/codemirror/lang-python.git"
+  },
+  {
+    "name": "@codemirror/language",
+    "version": "6.13.1",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/codemirror/language.git"
+  },
+  {
+    "name": "@codemirror/lint",
+    "version": "6.9.7",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/codemirror/lint.git"
+  },
+  {
+    "name": "@codemirror/search",
+    "version": "6.7.2",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/codemirror/search.git"
+  },
+  {
+    "name": "@codemirror/state",
+    "version": "6.7.6",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/codemirror/state.git"
+  },
+  {
+    "name": "@codemirror/streamparser",
+    "version": "6.0.0",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/codemirror/streamparser.git"
+  },
+  {
+    "name": "@codemirror/view",
+    "version": "6.43.15",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/codemirror/view.git"
+  },
+  {
+    "name": "@lezer/common",
+    "version": "1.5.5",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/lezer/common.git"
+  },
+  {
+    "name": "@lezer/css",
+    "version": "1.3.9",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/lezer/css.git"
+  },
+  {
+    "name": "@lezer/highlight",
+    "version": "1.2.5",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/lezer/highlight.git"
+  },
+  {
+    "name": "@lezer/html",
+    "version": "1.3.13",
+    "license": "MIT",
+    "repository": "https://github.com/lezer-parser/html.git"
+  },
+  {
+    "name": "@lezer/javascript",
+    "version": "1.5.6",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/lezer/javascript.git"
+  },
+  {
+    "name": "@lezer/json",
+    "version": "1.0.3",
+    "license": "MIT",
+    "repository": "https://github.com/lezer-parser/json.git"
+  },
+  {
+    "name": "@lezer/lr",
+    "version": "1.4.12",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/lezer/lr.git"
+  },
+  {
+    "name": "@lezer/python",
+    "version": "1.1.19",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/lezer/python.git"
+  },
+  {
+    "name": "@marijn/find-cluster-break",
+    "version": "1.0.4",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/marijn/find-cluster-break.git"
+  },
+  {
+    "name": "argparse",
+    "version": "3.0.4",
+    "license": "PSF-2.0",
+    "repository": "nodeca/argparse"
+  },
+  {
+    "name": "codemirror",
+    "version": "6.0.2",
+    "license": "MIT",
+    "repository": "https://github.com/codemirror/basic-setup.git"
+  },
+  {
+    "name": "crelt",
+    "version": "1.0.7",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/marijn/crelt.git"
+  },
+  {
+    "name": "diff",
+    "version": "9.0.0",
+    "license": "BSD-3-Clause",
+    "repository": "https://github.com/kpdecker/jsdiff.git"
+  },
+  {
+    "name": "entities",
+    "version": "8.1.0",
+    "license": "BSD-2-Clause",
+    "repository": "https://github.com/fb55/entities.git"
+  },
+  {
+    "name": "linkify-it",
+    "version": "6.1.0",
+    "license": "MIT",
+    "repository": "git+https://github.com/markdown-it/linkify-it.git"
+  },
+  {
+    "name": "lucide-react",
+    "version": "1.68.0",
+    "license": "ISC",
+    "repository": "https://github.com/lucide-icons/lucide.git"
+  },
+  {
+    "name": "markdown-it",
+    "version": "15.0.3",
+    "license": "MIT",
+    "repository": "markdown-it/markdown-it"
+  },
+  {
+    "name": "mdurl",
+    "version": "2.1.0",
+    "license": "MIT",
+    "repository": "git+https://github.com/markdown-it/mdurl.git"
+  },
+  {
+    "name": "punycode.js",
+    "version": "2.3.1",
+    "license": "MIT",
+    "repository": "https://github.com/mathiasbynens/punycode.js.git"
+  },
+  {
+    "name": "react",
+    "version": "19.3.1",
+    "license": "MIT",
+    "repository": "https://github.com/react/react.git"
+  },
+  {
+    "name": "react-dom",
+    "version": "19.3.1",
+    "license": "MIT",
+    "repository": "https://github.com/react/react.git"
+  },
+  {
+    "name": "scheduler",
+    "version": "0.28.0",
+    "license": "MIT",
+    "repository": "https://github.com/react/react.git"
+  },
+  {
+    "name": "style-mod",
+    "version": "4.1.4",
+    "license": "MIT",
+    "repository": "git+https://code.haverbeke.berlin/marijn/style-mod.git"
+  },
+  {
+    "name": "uc.micro",
+    "version": "3.0.0",
+    "license": "MIT",
+    "repository": "markdown-it/uc.micro"
+  },
+  {
+    "name": "w3c-keyname",
+    "version": "2.2.8",
+    "license": "MIT",
+    "repository": "git+https://github.com/marijnh/w3c-keyname.git"
+  }
+]

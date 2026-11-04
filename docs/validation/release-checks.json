@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "date": "2026-11-04",
+  "core_checks": {
+    "passed": 10,
+    "cases": [
+      "paths stay within the selected project, including junctions",
+      "new files are exclusive and edits can be undone without losing original bytes",
+      "stale saves and stale undo cannot overwrite an external edit",
+      "search returns real paths and line numbers",
+      "projects, chat messages and preferences survive a store restart",
+      "model endpoints stay local and compacted history keeps tool-call pairs valid",
+      "commands report real output and nonzero exits",
+      "long commands are terminated at the timeout",
+      "legacy migration preserves old data and never overwrites current history",
+      "model transport refuses HTTP redirects before reaching another endpoint"
+    ]
+  },
+  "desktop_checks": {
+    "passed": 9,
+    "real_local_model": true
+  },
+  "model_recipe_invariant_test": {
+    "passed": 1,
+    "downloads_required": false
+  },
+  "backend_profile_syntax": "passed",
+  "scope": "Functional checks, not a broad model-capability benchmark."
+}

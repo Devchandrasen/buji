@@ -1,0 +1,17 @@
+{
+  "base_repo": "Qwen/Qwen3-VL-4B-Instruct",
+  "base_revision": "ebb281ec70b05090aa6165b016eac8ec08e71b17",
+  "alpha": 1.0,
+  "hidden_state": 21,
+  "min_layer": 16,
+  "max_layer": 30,
+  "edited_tensors": 30,
+  "edited_parameters": 530841600,
+  "direction_sha256": "f7a895fe323d83acbeadd0b5a1b5cd51c2302644ed55e8fe530d53eb44111156",
+  "direction_dimension": 2560,
+  "mean_relative_frobenius_edit": 0.02137903530682729,
+  "limitations": [
+    "Experimental rank-one edit, not a broad benchmark.",
+    "All refusals and biases are not proven removed."
+  ]
+}
