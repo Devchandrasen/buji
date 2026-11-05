@@ -26,7 +26,7 @@ function relativeTime(value) {
   return minutes < 1 ? 'now' : minutes < 60 ? minutes + 'm' : minutes < 1440 ? Math.floor(minutes / 60) + 'h' : Math.floor(minutes / 1440) + 'd';
 }
 
-const Message = memo(function Message({ message, onLink }) {
+const Message = memo(function Message({ message, onLink, onOpenFile, onOpenFolder, onReview }) {
   const [copied, setCopied] = useState(false);
   if (message.role === 'notice') return <div className="notice"><CircleHelp size={14}/>{message.content}</div>;
   if (message.role === 'tool') {
@@ -40,7 +40,7 @@ const Message = memo(function Message({ message, onLink }) {
       <pre>{JSON.stringify(message.result || args, null, 2).slice(0, 14000)}</pre>
     </details>;
   }
-  if (message.role === 'assistant' && !message.content && !message.streaming) return null;
+  if (message.role === 'assistant' && !message.content && !message.streaming && !message.work) return null;
   const copy = async () => { await navigator.clipboard.writeText(message.content); setCopied(true); setTimeout(() => setCopied(false), 1500); };
   return <article className={'message ' + message.role}>
     {message.role === 'user' ? <div className="user-bubble">
@@ -50,6 +50,13 @@ const Message = memo(function Message({ message, onLink }) {
       <div className="assistant-label"><Brand small/><span>Buji</span>{message.streaming && <span className="writing">working</span>}</div>
       {message.streaming ? <div className="stream-text">{message.content || <span className="thinking-dots">Thinking<span>…</span></span>}</div>
         : <div className="markdown" onClick={onLink} dangerouslySetInnerHTML={{ __html: md.render(message.content || '') }}/>}
+      {message.work && <div className={'work-summary ' + message.work.status} data-testid="execution-summary">
+        <div className="work-summary-heading"><Folder size={15}/><strong>{message.work.status === 'completed' ? 'Completed on your PC' : message.work.status === 'declined' ? 'Stopped · command declined' : 'Work incomplete'}</strong></div>
+        <button className="work-folder" title="Open this folder in Windows Explorer" onClick={() => onOpenFolder(message.work.projectId)}><code>{message.work.root}</code><FolderOpen size={14}/></button>
+        {!!message.work.files.length && <div className="work-files">{message.work.files.map(path => <button key={path} onClick={() => onOpenFile(path)}><FileCode size={12}/>{path}</button>)}</div>}
+        {message.work.commands.map((command, index) => <div className="work-command" key={index}>{command.exitCode === 0 && !command.timedOut && !command.cancelled ? <Check size={13}/> : <CircleHelp size={13}/>}<code>{command.command}</code><span>{command.declined ? 'declined' : command.timedOut ? 'timed out' : command.cancelled ? 'cancelled' : 'exit ' + command.exitCode}</span></div>)}
+        {!!message.work.files.length && <button className="review-work" onClick={onReview}>Review saved changes <ChevronRight size={12}/></button>}
+      </div>}
       {!message.streaming && <div className="message-actions"><IconButton title={copied ? 'Copied' : 'Copy answer'} onClick={copy}>{copied ? <Check size={13}/> : <Copy size={13}/>}</IconButton>
         {message.tokensPerSecond > 0 && <span>{Math.round(message.tokensPerSecond)} tok/s</span>}
         {message.tokens > 0 && <span>{message.tokens} tokens</span>}</div>}
@@ -150,6 +157,9 @@ function App() {
           changes: [...value.changes.filter(c => c.id !== event.change.id), event.change] } : value);
         refreshTree();
         const editor = live.current.file;
+        if (currentId.current === event.threadId && (!editor || editor.content === editor.saved)) {
+          setRightOpen(true); setRightTab('changes');
+        }
         if (editor?.path === event.change.path && editor.content === editor.saved)
           setFile({ ...editor, content: event.change.after, saved: event.change.after, hash: event.change.afterHash });
       }
@@ -194,6 +204,10 @@ function App() {
   async function startModel() {
     setHealth(value => ({ ...value, loading: true, message: 'Starting Qwen3…' }));
     try { setHealth(await api.startModel()); } catch (error) { setHealth({ online: false, message: cleanError(error) }); notify(error); }
+  }
+  async function openProjectFolder(id) {
+    try { const error = await api.openProjectFolder(id); if (error) notify(error); }
+    catch (error) { notify(error); }
   }
   async function openFile(relative) {
     const current = live.current.file;
@@ -277,11 +291,11 @@ function App() {
             ].map(item => <button key={item.title} onClick={() => { setInput(item.text); textarea.current?.focus(); }}><item.icon size={17}/><span>{item.title}</span><ChevronRight size={13}/></button>)}</div>
             <div className="welcome-status"><i className={health.online ? 'online' : 'offline'}/>{health.online ? modelName + ' is ready' : health.message}
               {!health.online && <button disabled={health.loading} onClick={startModel}>{health.loading ? <LoaderCircle size={12} className="spin"/> : <Play size={12}/>}Start model</button>}</div>
-          </div> : <div className="messages">{thread.messages.map(message => <Message key={message.id} message={message} onLink={onLink}/>)}
-            {approval?.threadId === thread?.id && <div className="approval-card" data-testid="command-approval"><div><Terminal size={16}/><strong>Run this command?</strong></div><pre>{approval.command}</pre><small>PowerShell · {approval.cwd === '.' ? project?.name : approval.cwd}</small><div className="approval-buttons"><button onClick={() => api.approve(approval.id, false).catch(notify)}>Skip</button><button className="primary" onClick={() => api.approve(approval.id, true).catch(notify)}><Play size={12}/>Run command</button></div></div>}
+          </div> : <div className="messages">{thread.messages.map(message => <Message key={message.id} message={message} onLink={onLink} onOpenFile={openFile} onOpenFolder={openProjectFolder} onReview={() => { setRightOpen(true); setRightTab('changes'); }}/>) }
+            {approval?.threadId === thread?.id && <div className="approval-card" data-testid="command-approval"><div><Terminal size={16}/><strong>Run this command?</strong></div><pre>{approval.command}</pre>{approval.input && <><small>Scripted standard input</small><pre>{approval.input}</pre></>}<small>PowerShell · {approval.cwd === '.' ? project?.name : approval.cwd}</small><div className="approval-buttons"><button onClick={() => api.approve(approval.id, false).catch(notify)}>Skip</button><button className="primary" onClick={() => api.approve(approval.id, true).catch(notify)}><Play size={12}/>Run command</button></div></div>}
             <div ref={bottom}/></div>}
         </div>
-        <div className="composer-area"><div className={'composer ' + (busy ? 'busy' : '')}>
+        <div className="composer-area"><div className="workspace-context">{project ? <><Folder size={12}/><span>{mode === 'agent' ? 'Working in' : 'Chat only in'} <strong>{project.name}</strong></span><button title={project.root} onClick={() => openProjectFolder(projectId)}>Open folder <FolderOpen size={12}/></button></> : <><MessageSquare size={12}/><span>Chat only · choose a project to build things on your PC</span><button onClick={openProject}>Choose folder</button></>}</div><div className={'composer ' + (busy ? 'busy' : '')}>
           {(image || contextFiles.length > 0) && <div className="composer-attachments">{image && <span><Image size={12}/>{image.name}<button onClick={() => setImage(null)}><X size={11}/></button></span>}{contextFiles.map(value => <span key={value}><FileCode size={12}/>{value}<button onClick={() => setContextFiles(contextFiles.filter(f => f !== value))}><X size={11}/></button></span>)}</div>}
           <textarea ref={textarea} aria-label="Message Buji" placeholder={project ? 'Ask Buji to build, fix, or explain…' : 'Ask anything…'} value={input} onChange={event => setInput(event.target.value)} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); send(); } }} rows={3}/>
           <div className="composer-toolbar"><div><IconButton title="Attach image" onClick={async () => { try { const value = await api.chooseImage(); if (value) setImage(value); } catch (error) { notify(error); } }}><Plus size={18}/></IconButton>

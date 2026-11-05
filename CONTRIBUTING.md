@@ -20,6 +20,7 @@ The app connects to a localhost model API. The tested configuration uses `http:/
 ```powershell
 npm run build
 npm run test:desktop
+npm run test:actions
 ```
 
 These checks require the real local Qwen profile and Python on PATH. Keep its launcher discoverable as described in [Quick start](docs/QUICKSTART.md), using `Start-Qwen3.ps1` for an existing installation or the generated `models/backend/Start-Model.ps1`. They create disposable project/state folders under `artifacts/`, use command approval, and verify actual file contents and command output. They do not use your normal Buji history.
@@ -51,3 +52,5 @@ Build scratch files go under `work/buji-packaging`. The portable app is written 
 Useful areas include accessibility, model compatibility, context handling, command cancellation, packaging and documentation. Current priorities are in [ROADMAP.md](ROADMAP.md).
 
 Contributions are made under the project's MIT license. Dependencies, model artifacts and third-party code need their original license and attribution.
+
+`npm run test:game` is an optional real-model coding-quality probe, separate from execution acceptance. The current custom 4B model has produced both successful and failed games; see [Validation](docs/VALIDATION.md).

@@ -39,15 +39,19 @@ and a short list of next steps. Use the file tools to save it.
 
 **Agent** mode enables file and command tools. **Chat** mode answers without those tools. The **+** button attaches an image; the paperclip attaches the open text file.
 
+You do not need to ask the model to “use tools.” A build request in Agent mode should create files and check them. The workspace line shows the selected folder; **Open folder** opens it in Windows Explorer. General chats are labeled **Chat only** and cannot change project files.
+
 ## 5. Review the work
 
 - Open **Files and changes** to browse the project or inspect diffs.
 - Save editor changes with `Ctrl+S`.
 - A proposed PowerShell command appears before execution when command review is enabled.
+- Click **Run command** to approve it. Scripted standard input is shown too, when supplied.
+- The result card lists actual saved files and command exit codes. **Incomplete** means the required actions or checks did not finish; it is not a success claim.
 - Undo an edit from **Changes**. Buji checks for later external edits before restoring a file.
 - Restore archived conversations in **Settings → Archived chats**.
 
-The terminal runs individual non-interactive commands. It does not provide an interactive shell/PTY session.
+The terminal runs individual non-interactive commands. Agent commands can supply scripted standard input for CLI tests. It does not provide an interactive shell/PTY session; play keyboard-driven programs in a separate terminal.
 
 ## Existing QwenDesk users
 

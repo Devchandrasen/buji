@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = path.dirname(fileURLToPath(import.meta.url));
+const manifest = JSON.parse(await fs.readFile(path.join(root, 'package.json'), 'utf8'));
 let workspaceRoot = root;
 for (let cursor = root; ; cursor = path.dirname(cursor)) {
   try { await fs.access(path.join(cursor, 'work')); await fs.access(path.join(cursor, 'outputs')); workspaceRoot = cursor; break; } catch {}
@@ -22,12 +23,12 @@ await fs.mkdir(stage, { recursive: true });
 await fs.mkdir(deliverable, { recursive: true });
 await fs.cp(path.join(root, 'dist'), path.join(stage, 'dist'), { recursive: true });
 await fs.writeFile(path.join(stage, 'package.json'), JSON.stringify({
-  name: 'buji', productName: 'Buji V1', version: '1.0.0', main: 'dist/main.cjs',
+  name: 'buji', productName: 'Buji V1', version: manifest.version, main: 'dist/main.cjs',
   description: 'Your local coding workspace, powered by Qwen3 Personal WSP' }, null, 2));
 const options = { dir: stage, out: packageOutput, name: 'Buji V1', executableName: 'Buji',
   platform: 'win32', arch: 'x64', electronVersion: '45.2.2', asar: true,
   icon: path.join(root, 'assets', 'buji.ico'), overwrite: true,
-  appVersion: '1.0.0', appCopyright: 'Copyright 2026 Dr Chandrasen Pandey and Buji contributors',
+  appVersion: manifest.version, appCopyright: 'Copyright 2026 Dr Chandrasen Pandey and Buji contributors',
   win32metadata: { CompanyName: 'Buji contributors', FileDescription: 'Buji V1 local coding desktop',
     ProductName: 'Buji V1', InternalName: 'Buji V1', OriginalFilename: 'Buji.exe' } };
 const zipName = 'electron-v45.2.2-win32-x64.zip';

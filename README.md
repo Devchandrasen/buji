@@ -38,8 +38,9 @@ The application is MIT-licensed. A hosted AI account or subscription is not requ
 | Coding agent | List, read, search, create and edit UTF-8 project files |
 | File work | Draft Markdown, summarize source/text files, and build small utilities |
 | Review | Before/after diffs and undo with external-change checks |
+| Execution evidence | Saved file paths, actual command results, folder/review actions and explicit incomplete status |
 | Editor | Syntax highlighting, line numbers, and `Ctrl+S` |
-| Commands | Non-interactive PowerShell with command review enabled by default |
+| Commands | Non-interactive PowerShell, scripted standard input, and command review enabled by default |
 | Vision | Image attachments when the connected model supports them |
 | Personal workspace | Light/dark themes, local settings and local chat history |
 | Local model connection | Configurable localhost OpenAI-compatible chat endpoint |
@@ -58,6 +59,8 @@ The walkthrough below uses actual app captures from the integration test: the mo
 2. Extract the complete folder and open **Start-Buji.cmd** or **app/Buji.exe**.
 3. Connect a running local model in **Settings**, or select a PowerShell launcher for it.
 4. Choose **Open project folder**. Use **Agent** mode to work with files, or **Chat** mode for conversation.
+
+In Agent mode, an ordinary request such as “build a Python Tic Tac Toe game” means work in the selected folder. Recognized build requests require actual file changes and a successful check after the latest edit before being marked complete. If the model still fails to act after bounded retries, Buji reports incomplete work. Commands wait for your review by default; click **Run command** to allow the shown command and any scripted input.
 
 **Model setup is separate.** The download includes the desktop application, not multi-gigabyte model weights or an inference runtime. The [model guide](docs/MODELS.md) covers the tested Qwen profile, an existing local API, and an optional backend launcher.
 

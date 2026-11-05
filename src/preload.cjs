@@ -9,7 +9,7 @@ contextBridge.exposeInMainWorld('buji', Object.freeze({
   search: invoke('search'), gitStatus: invoke('git-status'), terminal: invoke('terminal'), cancelTerminal: invoke('cancel-terminal'),
   chooseImage: invoke('choose-image'), chooseBackendScript: invoke('choose-backend-script'),
   saveSettings: invoke('save-settings'), health: invoke('health'), startModel: invoke('start-model'),
-  openDataFolder: invoke('open-data-folder'), window: invoke('window'), external: invoke('external'),
+  openDataFolder: invoke('open-data-folder'), openProjectFolder: invoke('open-project-folder'), window: invoke('window'), external: invoke('external'),
   onEvent(callback) {
     const listener = (_event, payload) => callback(payload);
     ipcRenderer.on('buji:event', listener);

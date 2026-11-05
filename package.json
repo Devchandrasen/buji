@@ -1,15 +1,17 @@
 {
   "name": "buji",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "A local-first personal alternative to Codex and Claude Cowork for coding and text-file work.",
   "main": "dist/main.cjs",
   "scripts": {
     "build": "node build.mjs",
     "start": "electron .",
-    "test": "node --test tests/core.test.cjs",
+    "test": "node --test tests/core.test.cjs tests/agent.test.cjs",
     "test:desktop": "node tests/desktop.cjs",
-    "package": "node package.mjs"
+    "test:actions": "node tests/actions-desktop.cjs",
+    "package": "node package.mjs",
+    "test:game": "node tests/game-desktop.cjs"
   },
   "dependencies": {
     "@codemirror/lang-css": "^6.3.0",

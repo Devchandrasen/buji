@@ -9,9 +9,11 @@ function killTree(child) {
     killer.on('error', () => child.kill());
   } else child.kill('SIGTERM');
 }
-async function runCommand(root, command, { cwd = '.', timeout = 60000, signal, onOutput = () => {} } = {}) {
+async function runCommand(root, command, { cwd = '.', input = '', timeout = 60000, signal, onOutput = () => {} } = {}) {
   if (typeof command !== 'string' || !command.trim() || command.length > 8000)
     throw new Error('Provide a command between 1 and 8000 characters.');
+  if (typeof input !== 'string' || Buffer.byteLength(input, 'utf8') > 65536)
+    throw new Error('Provide standard input as text smaller than 64 KiB.');
   const directory = await safePath(root, cwd);
   if (signal?.aborted) throw new Error('Command cancelled.');
   return new Promise((resolve, reject) => {
@@ -21,7 +23,9 @@ async function runCommand(root, command, { cwd = '.', timeout = 60000, signal, o
         '[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); $OutputEncoding = [Console]::OutputEncoding; ' + command]
       : ['-c', command];
     const child = spawn(shell, args, { cwd: directory, windowsHide: true,
-      env: { ...process.env, NO_COLOR: '1', GIT_PAGER: 'cat', TERM: 'dumb' }, stdio: ['ignore', 'pipe', 'pipe'] });
+      env: { ...process.env, NO_COLOR: '1', GIT_PAGER: 'cat', TERM: 'dumb' }, stdio: ['pipe', 'pipe', 'pipe'] });
+    child.stdin.on('error', () => {}); // A short-lived command can close input early.
+    child.stdin.end(input, 'utf8');
     let output = '', timedOut = false, cancelled = false;
     const append = (chunk, stream) => {
       const text = chunk.toString('utf8'); output = (output + text).slice(-120000); onOutput(text, stream);

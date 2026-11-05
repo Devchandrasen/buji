@@ -56,6 +56,17 @@ async function startBackend(settings, onStatus = () => {}) {
 }
 
 function compactMessages(messages, budget = 14000) {
+  const rejectedCalls = new Set();
+  messages = messages.flatMap(message => {
+    if (message.role === 'assistant' && message.tool_calls?.some(call => {
+      try { const args = JSON.parse(call.function.arguments || '{}'); return !args || typeof args !== 'object' || Array.isArray(args); }
+      catch { return true; }
+    })) {
+      for (const call of message.tool_calls) rejectedCalls.add(call.id);
+      return [{ role: 'assistant', content: 'An earlier tool response had malformed arguments. Inspect the current files before continuing; its requested work must not be assumed complete.' }];
+    }
+    return message.role === 'tool' && rejectedCalls.has(message.tool_call_id) ? [] : [message];
+  });
   const groups = [];
   for (const message of messages) {
     if (message.role === 'user' || !groups.length) groups.push([]);
@@ -82,10 +93,10 @@ function compactMessages(messages, budget = 14000) {
   }
   return selected;
 }
-async function complete(settings, messages, tools, signal, onText) {
+async function complete(settings, messages, tools, signal, onText, options = {}) {
   const response = await fetch(endpointUrl(settings.endpoint, '/chat/completions'), {
     method: 'POST', redirect: 'error', headers: { 'Content-Type': 'application/json' }, signal,
-    body: JSON.stringify({ model: settings.model, messages, ...(tools.length ? { tools, tool_choice: 'auto' } : {}),
+    body: JSON.stringify({ model: settings.model, messages, ...(tools.length ? { tools, tool_choice: options.toolChoice || 'auto' } : {}),
       temperature: .25, top_p: .8, top_k: 20, max_tokens: 1800, stream: true,
       stream_options: { include_usage: true }, parallel_tool_calls: false })
   });
@@ -115,17 +126,18 @@ async function complete(settings, messages, tools, signal, onText) {
       }
     }
   }
-  let toolCalls = [...calls.values()];
+  let toolCalls = [...calls.values()], invalidToolCall = false;
   // Some local chat templates emit literal tool tags instead of structured deltas.
-  if (!toolCalls.length && content.includes('<tool_call>')) {
+  if (tools.length && !toolCalls.length && content.includes('<tool_call>')) {
     const expressions = [...content.matchAll(/<tool_call>\s*([\s\S]*?)\s*<\/tool_call>/g)];
+    if (!expressions.length) invalidToolCall = true;
     for (const expression of expressions) {
-      const value = JSON.parse(expression[1]);
+      let value; try { value = JSON.parse(expression[1]); } catch { invalidToolCall = true; continue; }
       toolCalls.push({ id: 'local-' + crypto.randomUUID(), type: 'function', function: {
         name: value.name, arguments: JSON.stringify(value.arguments || {}) } });
     }
     if (toolCalls.length) content = content.replace(/<tool_call>[\s\S]*?<\/tool_call>/g, '').trim();
   }
-  return { content, toolCalls, timings, usage };
+  return { content, toolCalls, invalidToolCall, timings, usage };
 }
 module.exports = { endpointUrl, health, startBackend, findBackend, compactMessages, complete };

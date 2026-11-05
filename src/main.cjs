@@ -31,7 +31,7 @@ function trusted(event) {
 function handle(name, callback) {
   ipcMain.handle('buji:' + name, async (event, ...args) => { trusted(event); return callback(...args); });
 }
-async function approve(threadId, command, cwd, signal) {
+async function approve(threadId, command, cwd, signal, input = '') {
   if (signal.aborted) return false;
   return new Promise(resolve => {
     const approvalId = id();
@@ -42,7 +42,7 @@ async function approve(threadId, command, cwd, signal) {
     const abort = () => finish(false);
     approvals.set(approvalId, { finish, threadId });
     signal.addEventListener('abort', abort, { once: true });
-    emit({ type: 'approval', approval: { id: approvalId, threadId, command, cwd } });
+    emit({ type: 'approval', approval: { id: approvalId, threadId, command, cwd, input } });
   });
 }
 async function bootstrap() {
@@ -161,6 +161,7 @@ function register() {
     emit({ type: 'health', value: result }); return result;
   });
   handle('open-data-folder', () => shell.openPath(dataDirectory));
+  handle('open-project-folder', projectId => shell.openPath(store.project(projectId).root));
   handle('window', action => {
     if (action === 'minimize') win.minimize();
     else if (action === 'maximize') win.isMaximized() ? win.unmaximize() : win.maximize();

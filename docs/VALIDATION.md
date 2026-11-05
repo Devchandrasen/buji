@@ -17,6 +17,8 @@ Buji separates application checks from model-quality claims.
 
 The public CI workflow runs these checks and builds the renderer on Windows with Node.js 24.
 
+The 1.0.1 suite has 23 checks: 12 core checks and eleven agent regressions. The agent regressions use an explicitly scripted local test provider and real temporary file/command operations. They cover tutorial recovery, premature handoff, verification ordering, bounded failure, command declines, Chat mode and missing-project errors. They are distinct from the real-model checks below.
+
 ## Real-model desktop checks
 
 `npm run test:desktop` uses Electron and a real local Qwen3 Personal WSP server. It creates an isolated project and data directory, then verifies:
@@ -32,6 +34,10 @@ The public CI workflow runs these checks and builds the renderer on Windows with
 9. An image attachment reaching the vision model
 
 The release validation report records which checks ran. These tests use a small task; they do not certify general coding ability, factual accuracy, security, or compatibility with every local server.
+
+`npm run test:actions` checks the real-model desktop execution workflow with an ordinary request to build a Python program, without a tool-use instruction. It verifies on-disk creation, reviewed model-generated checks, the result/folder UI, independent compilation and actual program output.
+
+`npm run test:game` is a separate, optional model-quality probe that asks for a Python Tic Tac Toe game and independently plays it. Development testing observed both a successful game and failures, including a board-indexing error the model failed to repair. This probe is not the execution acceptance check; no reliable game-generation pass rate or general coding quality is established.
 
 ## Visual evidence
 

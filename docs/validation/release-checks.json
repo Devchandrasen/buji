@@ -1,8 +1,8 @@
 {
-  "version": "1.0.0",
-  "date": "2026-11-04",
+  "version": "1.0.1",
+  "date": "2026-11-05",
   "core_checks": {
-    "passed": 10,
+    "passed": 12,
     "cases": [
       "paths stay within the selected project, including junctions",
       "new files are exclusive and edits can be undone without losing original bytes",
@@ -13,7 +13,9 @@
       "commands report real output and nonzero exits",
       "long commands are terminated at the timeout",
       "legacy migration preserves old data and never overwrites current history",
-      "model transport refuses HTTP redirects before reaching another endpoint"
+      "model transport refuses HTTP redirects before reaching another endpoint",
+      "scripted standard input reaches a real child program",
+      "old malformed tool groups are removed only from model transport history"
     ]
   },
   "desktop_checks": {
@@ -25,5 +27,19 @@
     "downloads_required": false
   },
   "backend_profile_syntax": "passed",
-  "scope": "Functional checks, not a broad model-capability benchmark."
+  "scope": "Functional checks, not a broad model-capability benchmark.",
+  "agent_regressions": {
+    "passed": 11,
+    "provider": "scripted local test provider with real file and command operations"
+  },
+  "natural_request_desktop_acceptance": {
+    "backend": "real Qwen3 Personal WSP",
+    "task": "Python program creation and execution",
+    "packaged_verification": "passed"
+  },
+  "optional_game_probe": {
+    "development_outcomes": "mixed",
+    "known_failure": "board indexing error not repaired by the model",
+    "reliable_pass_rate_established": false
+  }
 }

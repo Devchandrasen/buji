@@ -81,6 +81,22 @@ test('commands report real output and nonzero exits', () => fixture(async root =
   const result = await runCommand(root, command);
   assert.match(result.output, /BUJI_CORE_OK/); assert.equal(result.exitCode, 7);
 }));
+test('old malformed tool groups are removed only from model transport history', () => {
+  const history = [{ role: 'user', content: 'Build it.' },
+    { role: 'assistant', content: null, tool_calls: [{ id: 'bad', type: 'function', function: { name: 'run_command', arguments: '{"command":"unfinished' } }] },
+    { role: 'tool', tool_call_id: 'bad', content: '{"error":"invalid JSON"}' }, { role: 'user', content: 'Continue.' }];
+  const before = JSON.stringify(history), compact = compactMessages(history);
+  assert.equal(JSON.stringify(history), before);
+  assert.ok(!compact.some(m => m.role === 'tool' || m.tool_calls));
+  assert.ok(compact.some(m => m.content?.includes('malformed arguments')));
+  assert.equal(compact.at(-1).content, 'Continue.');
+});
+test('scripted standard input reaches a real child program', () => fixture(async root => {
+  await fs.writeFile(path.join(root, 'stdin.cjs'), "process.stdin.on('data', chunk => process.stdout.write(chunk.toString().toUpperCase()));\n");
+  const result = await runCommand(root, 'node stdin.cjs', { input: 'alpha\nbeta\n' });
+  assert.equal(result.exitCode, 0); assert.equal(result.output.replaceAll('\r\n', '\n'), 'ALPHA\nBETA\n');
+  await assert.rejects(runCommand(root, 'node stdin.cjs', { input: 'x'.repeat(65537) }), /64 KiB/);
+}));
 test('long commands are terminated at the timeout', () => fixture(async root => {
   const command = process.platform === 'win32' ? 'Start-Sleep -Seconds 20' : 'sleep 20';
   const result = await runCommand(root, command, { timeout: 1000 }); assert.equal(result.timedOut, true);

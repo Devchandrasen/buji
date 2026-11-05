@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "backend": "real Qwen3 Personal WSP",
+  "prompt": "ordinary Python program build request without a tool-use instruction",
+  "createdPythonFiles": [
+    "main.py"
+  ],
+  "commandApprovals": 1,
+  "agentVerification": "passed",
+  "independentPythonCompilation": "passed",
+  "independentProgramExecution": "passed",
+  "nativeFolderAction": "passed",
+  "rendererErrors": []
+}

@@ -49,8 +49,9 @@ async function mark(name, detail) { results.push({ name, passed: true, detail })
   const commandResult = saved.threads.flatMap(t => t.messages).find(m => m.role === 'tool' && m.name === 'run_command' && m.result?.exitCode === 0);
   assert.ok(commandResult); await mark('approved command ran with exit code 0');
   await capture('04-result');
-  await page.getByRole('button', { name: 'Files and changes', exact: true }).click();
-  await page.getByRole('button', { name: 'hello_buji.py', exact: true }).click();
+  await page.getByTestId('execution-summary').filter({ hasText: 'Completed on your PC' }).waitFor();
+  await page.getByRole('button', { name: 'Files', exact: true }).click();
+  await page.locator('.file-tree').getByRole('button', { name: 'hello_buji.py', exact: true }).click();
   const editor = page.locator('.cm-content');
   await editor.click(); await page.keyboard.press('ControlOrMeta+A');
   await page.keyboard.insertText("print('EDITOR_SAVE_OK')\n");

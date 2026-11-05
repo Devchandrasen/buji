@@ -28,6 +28,10 @@ flowchart LR
 
 Supported tools are `list_files`, `read_file`, `search_text`, `write_file`, `edit_file` and `run_command`. A turn has at most 16 rounds. There is one active agent reply at a time, matching the tested single-slot model backend.
 
+`src/core/task.cjs` recognizes common English/Hinglish action requests and tracks per-turn file/command evidence. A recognized code-build request needs a write and a successful command after the most recent write. Premature prose is retried through native tool calling, at most twice; it is never parsed as shell/code to execute. A remaining unmet requirement produces an incomplete result. This request classifier is a heuristic, not a universal understanding of intent or proof that a test is sufficient.
+
+A declined command ends action execution for that turn, including later calls from the same response. Execution summaries use recorded results rather than the model's completion claims. Chat mode remains a deliberate answer-only mode.
+
 Tool output and files are described to the model as data. This instruction is not a proof of prompt-injection resistance; actual file/IPC checks and command review provide separate controls.
 
 ## Model transport
