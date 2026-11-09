@@ -1,18 +1,18 @@
 {
   "electron-v45.2.2-win32-x64.zip": {
-    "url": "https://github.com/electron/electron/releases/download/v45.2.2/electron-v45.2.2-win32-x64.zip",
+    "url": "https://github.com/electron/electron/releases/download/v45.2.2/electron-v45.2.2-win32-x64.zip?download=1",
     "sha256": "a234388419ccbcb18dd2feec856e4ae1832499e200837f23f8e653bd51ff3be5"
   },
   "nsis-bundle-3.13.tar.gz": {
-    "url": "https://github.com/electron-userland/electron-builder-binaries/releases/download/nsis%402.0.4/nsis-bundle-3.13.tar.gz",
+    "url": "https://github.com/electron-userland/electron-builder-binaries/releases/download/nsis%402.0.4/nsis-bundle-3.13.tar.gz?download=1",
     "sha256": "c18e9ad9684cf4c5bbd7b768cbf1b056d40771d7bd9ae1b513346452decf89d2"
   },
   "llama-b12099-bin-win-cpu-x64.zip": {
-    "url": "https://github.com/ggml-org/llama.cpp/releases/download/b12099/llama-b12099-bin-win-cpu-x64.zip",
+    "url": "https://github.com/ggml-org/llama.cpp/releases/download/b12099/llama-b12099-bin-win-cpu-x64.zip?download=1",
     "sha256": "ba751a91caeb8f5492c408386a46c9e0eba7da599c81bce1383260342e2b672b"
   },
   "whisper-bin-x64.zip": {
-    "url": "https://github.com/ggml-org/whisper.cpp/releases/download/b5454/whisper-bin-x64.zip",
+    "url": "https://github.com/ggml-org/whisper.cpp/releases/download/b5454/whisper-bin-x64.zip?download=1",
     "sha256": "6ba69e3482d7826214f90a6a9c84ca07782aec1e1d0c6a7c30c994fd5d816ccb"
   },
   "ggml-small-q5_1.bin": {
@@ -28,7 +28,7 @@
     "sha256": "c46efd13b6aa8279f33f2864459c8ce587ea6a1a59ee20de055868d8f7688f7f"
   },
   "Buji-V3-WSP-adapters.zip": {
-    "url": "https://github.com/Devchandrasen/buji/releases/download/v3.0.0-preview.1/Buji-V3-WSP-adapters.zip",
+    "url": "https://github.com/Devchandrasen/buji/releases/download/v3.0.0-preview.1/Buji-V3-WSP-adapters.zip?download=1",
     "sha256": "a26f849fed112c03350ba321178325ac6d34676d1d5ca0dfe54df3f6cb6a95fb"
   }
 }
