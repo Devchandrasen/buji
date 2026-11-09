@@ -1,13 +1,13 @@
 {
   "name": "buji",
-  "version": "1.0.1",
+  "version": "3.0.0-preview.1",
   "private": true,
   "description": "A local-first personal alternative to Codex and Claude Cowork for coding and text-file work.",
   "main": "dist/main.cjs",
   "scripts": {
     "build": "node build.mjs",
     "start": "electron .",
-    "test": "node --test tests/core.test.cjs tests/agent.test.cjs",
+    "test": "node --test tests/core.test.cjs tests/agent.test.cjs tests/security.test.cjs tests/visual.test.cjs tests/brain.test.cjs",
     "test:desktop": "node tests/desktop.cjs",
     "test:actions": "node tests/actions-desktop.cjs",
     "package": "node package.mjs",
@@ -23,6 +23,7 @@
     "diff": "9.0.0",
     "lucide-react": "1.68.0",
     "markdown-it": "15.0.3",
+    "parse5": "8.0.0",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },

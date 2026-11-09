@@ -31,6 +31,8 @@ for (const [location, record] of Object.entries(lock.packages || {})) {
   } else notices.push(`| ${entry.name} | ${entry.version} | ${entry.license} |`);
 }
 notices.push('', 'Electron and Chromium notices are included with the Windows runtime. The optional Qwen model recipe is described in `tools/model/README.md`; its base checkpoint is Apache-2.0. No model weights are part of the app repository.', '');
+notices.push('Optional visual computer-use components and their licenses are documented in [Visual runtime notices](docs/vision-third-party-notices.md).', '');
+full.push(await fs.readFile(path.join(root, 'docs', 'vision-third-party-notices.md'), 'utf8'));
 await fs.writeFile(path.join(root, 'THIRD_PARTY_NOTICES.md'), notices.join('\n'));
 await fs.writeFile(path.join(root, 'docs', 'dependencies.json'), JSON.stringify(inventory, null, 2)+'\n');
 await fs.mkdir(path.join(root, 'dist'), { recursive: true });

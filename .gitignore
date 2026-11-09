@@ -21,6 +21,7 @@ workspace.json
 *.7z
 __pycache__/
 *.pyc
+*.key
 .venv/
 .DS_Store
 Thumbs.db

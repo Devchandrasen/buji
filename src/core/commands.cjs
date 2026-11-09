@@ -43,4 +43,4 @@ async function runCommand(root, command, { cwd = '.', input = '', timeout = 6000
     });
   });
 }
-module.exports = { runCommand };
+module.exports = { runCommand, killTree };

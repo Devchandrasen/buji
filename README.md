@@ -1,133 +1,43 @@
-<p align="center">
-  <img src="docs/assets/banner.svg" alt="Buji V1 — Your personal AI workbench" width="100%" />
-</p>
+# Buji V3
 
-<p align="center">
-  <a href="https://github.com/Devchandrasen/buji/releases/latest"><img alt="Download Windows release" src="https://img.shields.io/github/v/release/Devchandrasen/buji?label=Windows&color=244d3c&style=flat-square" /></a>
-  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-244d3c?style=flat-square" /></a>
-  <a href="https://github.com/Devchandrasen/buji/actions/workflows/ci.yml"><img alt="Build and tests" src="https://github.com/Devchandrasen/buji/actions/workflows/ci.yml/badge.svg" /></a>
-  <img alt="Local model inference" src="https://img.shields.io/badge/inference-local-244d3c?style=flat-square" />
-</p>
+Buji is a local AI workspace for Windows from [CBN.Ai](https://devchandrasen.github.io/CBN.ai/). Open a folder to ask questions, make reviewable changes, and see the files and checks behind a result.
 
-<p align="center">
-  <strong>An open-source, local-first personal alternative to Codex and Claude Cowork.</strong><br/>
-  For coding and text-file work on Windows. Your projects, your conversations, your local model.
-</p>
+[Download the Windows x64 preview](https://github.com/Devchandrasen/buji/releases/tag/v3.0.0-preview.1)
 
-<p align="center">
-  <a href="https://github.com/Devchandrasen/buji/releases/latest">Download</a> ·
-  <a href="docs/QUICKSTART.md">Quick start</a> ·
-  <a href="docs/MODELS.md">Connect a model</a> ·
-  <a href="docs/ARCHITECTURE.md">Architecture</a> ·
-  <a href="CONTRIBUTING.md">Contribute</a>
-</p>
+- **Ask, Work, and Research.** Use local chat, work in a real project, or fetch current information from public web sources.
+- **Review actions.** Inspect proposed commands and diffs. Use project-scoped sandbox mode or opt into full local access. Undo supported edits.
+- **Use your voice.** Whisper transcribes locally. An optional Hindi voice supports Hindi and Hinglish replies.
+- **Work with a Windows app.** Optional local vision reads a selected window. Buji asks before sending keyboard or pointer input.
 
-## Meet Buji
+## Install on Windows
 
-Buji brings a familiar project-and-chat workspace to a model running on your own computer. Give it a folder and a task. It can inspect text files, make real edits, propose a PowerShell command, and show the results in an editor and reviewable diff.
+1. Download `Buji-V3-Setup-x64.exe` and verify its SHA-256 using `SHA256SUMS.txt` on the release.
+2. Run the unsigned preview installer. It installs for your Windows account.
+3. Open **Buji** from the **Buji V3** Start menu folder. First launch downloads and verifies the 5.63 GB text model. Keep about 12 GB free during assembly. A download can resume from the same shortcut.
 
-The application is MIT-licensed. A hosted AI account or subscription is not required to use Buji with an unauthenticated local model server. You provide the hardware and model.
+Use Windows 10 or 11 x64. Windows 11 is recommended for visual computer use. We recommend 16 GB RAM and a recent x64 CPU. CPU inference works without a discrete GPU and can be slow. Use the optional NVIDIA setup with a compatible driver and sufficient VRAM. The Start menu also has a shortcut to return to CPU mode.
 
-![Buji V1 working with real project files, a diff, and PowerShell output](docs/assets/workspace.png)
+For Hindi speech or computer use, close Buji and choose **Set up Hindi speech** or **Set up visual computer use** from the same folder. Visual computer use downloads an additional 1.55 GB model. Hindi speech downloads Piper dependencies and the Pratham voice. The Pratham model card lists a CC BY-NC-SA 4.0 dataset. Consult that card before using the voice commercially.
 
-## What V1 does
+After setup, text inference and installed speech and vision run locally. Web research sends search requests to public providers. Chats, approvals, and model files stay under your Windows profile. Uninstall from Windows Settings. The uninstaller preserves the Buji profile under `%APPDATA%\CBN.Ai\Buji` and downloaded assets under `%LOCALAPPDATA%\CBN.Ai\Buji Assets`.
 
-| Workflow | Included |
-| --- | --- |
-| Project-based conversations | Open folders, saved chats, search, rename, archive and restore |
-| Coding agent | List, read, search, create and edit UTF-8 project files |
-| File work | Draft Markdown, summarize source/text files, and build small utilities |
-| Review | Before/after diffs and undo with external-change checks |
-| Execution evidence | Saved file paths, actual command results, folder/review actions and explicit incomplete status |
-| Editor | Syntax highlighting, line numbers, and `Ctrl+S` |
-| Commands | Non-interactive PowerShell, scripted standard input, and command review enabled by default |
-| Vision | Image attachments when the connected model supports them |
-| Personal workspace | Light/dark themes, local settings and local chat history |
-| Local model connection | Configurable localhost OpenAI-compatible chat endpoint |
+This is an early preview. Review generated edits, shell commands, and computer actions before applying them. See the [security guide](SECURITY.md) and [privacy details](docs/PRIVACY.md).
 
-### A real workflow
+## Build the desktop app
 
-The walkthrough below uses actual app captures from the integration test: the model creates a Python file, waits for command approval, runs it, and exposes the edit for review. Frame timing is edited for readability.
-
-![Buji V1 workflow walkthrough](docs/assets/workflow.gif)
-
-## Get started
-
-### Windows download
-
-1. Download **Buji-V1-Windows-x64.zip** from [Releases](https://github.com/Devchandrasen/buji/releases/latest).
-2. Extract the complete folder and open **Start-Buji.cmd** or **app/Buji.exe**.
-3. Connect a running local model in **Settings**, or select a PowerShell launcher for it.
-4. Choose **Open project folder**. Use **Agent** mode to work with files, or **Chat** mode for conversation.
-
-In Agent mode, an ordinary request such as “build a Python Tic Tac Toe game” means work in the selected folder. Recognized build requests require actual file changes and a successful check after the latest edit before being marked complete. If the model still fails to act after bounded retries, Buji reports incomplete work. Commands wait for your review by default; click **Run command** to allow the shown command and any scripted input.
-
-**Model setup is separate.** The download includes the desktop application, not multi-gigabyte model weights or an inference runtime. The [model guide](docs/MODELS.md) covers the tested Qwen profile, an existing local API, and an optional backend launcher.
-
-The validated profile is **Qwen3 Personal WSP**, a custom Qwen3-VL-4B-Instruct Q4_K_M build with an F16 vision projector. Existing installations of that profile are detected automatically. Other model/server combinations need their own configuration and validation.
-
-### Run from source
-
-Requires Windows and Node.js 24. Git and Python are useful for project tasks; Python is not required just to open the app.
+Use Node.js 24 and npm on Windows x64.
 
 ```powershell
-git clone https://github.com/Devchandrasen/buji.git
-cd buji
 npm ci
+npm test
 npm run build
-npm start
+node package.mjs --v2 --stage-only
 ```
 
-```powershell
-npm test                 # Core checks, no GPU or model required
-npm run test:desktop     # Real desktop + local-model checks
-npm run package          # Build a portable Windows application
-```
+The V2 packaging flag and executable name are compatibility identifiers for the local OmniCoder-based backend. The UI and Windows installer identify this release as Buji V3. The source includes the [router](tools/brain), the [first-run scripts and NSIS definition](tools/windows-release), and the [model manifest](tools/windows-release/release-assets.json).
 
-See [Contributing](CONTRIBUTING.md) for development and packaging details.
+## Models and licenses
 
-## Why a personal alternative?
+The application source is MIT-licensed. The text backend uses an Apache-2.0 OmniCoder-9B checkpoint from [Tesslate](https://huggingface.co/Tesslate/OmniCoder-9B), locally quantized to GGUF Q4_K_M from revision `9edd36a30fc7b95b6fd81b7ea16a73cbaf205734`. The supplied WSP adapters are local derivatives of that checkpoint and are loaded at zero scale for the original coding and reasoning route. The optional vision backend uses [Qwen3-VL-2B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct-GGUF). See [third-party notices](THIRD_PARTY_NOTICES.md) and the notices included in setup for component terms and provenance.
 
-Buji focuses on the **folder → conversation → action → review** workflow. [Codex](https://openai.com/index/introducing-the-codex-app/) describes a broader agent workspace for software development; [Claude Cowork](https://support.claude.com/en/articles/13345190-get-started-with-claude-cowork) describes multi-step work beyond coding. Buji offers a smaller, inspectable, self-hosted take on a subset of those workflows.
-
-| If you want… | Buji V1 |
-| --- | --- |
-| A desktop interface for your own local model | Included |
-| A visible record of file edits and commands | Included |
-| Source you can inspect and modify | MIT-licensed |
-| Cloud agents, parallel worktrees or remote task continuation | Outside V1 |
-| Browser/computer automation, MCP connectors or app integrations | Outside V1 |
-| Native editing of PDF, DOCX, XLSX or slide decks | Outside V1 |
-| The reasoning capability of a frontier coding model | Depends on the model you connect; not established by this project |
-
-Buji is an independent project and is not affiliated with OpenAI or Anthropic. “Alternative” describes the personal workflow and deployment choice, not feature parity or a model-quality benchmark.
-
-## How it works
-
-![Buji architecture and local execution boundaries](docs/assets/architecture.svg)
-
-- The React renderer talks to a narrow Electron preload bridge.
-- The main process handles persistence, the agent loop, workspace file tools and command execution.
-- Chat context is sent to a localhost model endpoint; redirects are rejected.
-- File tools check project boundaries, including junctions. PowerShell commands run with your Windows account's permissions after the configured review step.
-
-The command runner is **not an OS sandbox**. See [Architecture](docs/ARCHITECTURE.md), [Privacy](docs/PRIVACY.md) and [Security](SECURITY.md) for the actual boundaries.
-
-## Tested configuration and current limits
-
-The original implementation was exercised with an RTX 5060 Laptop GPU (8 GB VRAM), about 16 GB system RAM, and the custom Qwen3-VL-4B profile. Its model plus vision projector occupy about 3.10 GiB; model weights are reused rather than copied into the app.
-
-V1 uses an 8K context configuration in the tested backend and caps a turn at 16 tool rounds. Long model history is shortened while full conversation history stays stored locally. The terminal is a command runner rather than a full interactive PTY. Generated code still needs project-specific tests and review.
-
-[Validation details](docs/VALIDATION.md) distinguish core checks, real-model desktop checks and model experiments. The optional [weight-space editing recipe](tools/model/README.md) documents the custom checkpoint without distributing its weights or claiming complete removal of model refusals.
-
-## Project
-
-- [Roadmap](ROADMAP.md) — planned work, clearly separated from shipped features
-- [Changelog](CHANGELOG.md) — release history
-- [Contributing](CONTRIBUTING.md) — development, tests and useful contributions
-- [Security](SECURITY.md) — reporting and execution boundaries
-- [Code of conduct](CODE_OF_CONDUCT.md) — community expectations
-- [Third-party notices](THIRD_PARTY_NOTICES.md) — dependencies and upstream attribution
-
-**License:** [MIT](LICENSE) for Buji's application code. Model weights and third-party software retain their own licenses.
+[Report an issue](https://github.com/Devchandrasen/buji/issues)

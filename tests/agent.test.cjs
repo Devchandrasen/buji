@@ -80,6 +80,27 @@ test('Chat mode keeps a code-only answer and does not mutate the project', () =>
   assert.match(thread.messages.at(-1).content, /Example only: <tool_call>/);
 }));
 
+test('Sandbox writes project files, blocks command execution and reports checks as pending', () => fixture([
+  call('write_file', { path: 'utility.js', content: "console.log('SANDBOX_FILE');\n" }),
+  call('run_command', { command: 'node utility.js' }),
+  text('File written.')
+], async ({ root, store, agent, thread, requests }) => {
+  store.data.settings.accessMode = 'sandbox';
+  const project = store.project(thread.projectId);
+  await assert.rejects(agent.execute(thread, project, {
+    function: { name: 'run_command', arguments: '{"command":"node utility.js"}' }
+  }), /PowerShell is disabled in Sandbox/);
+  await agent.send({ threadId: thread.id, text: 'Build and test a Node utility.', mode: 'agent' });
+  assert.equal(await fs.readFile(path.join(root, 'utility.js'), 'utf8'), "console.log('SANDBOX_FILE');\n");
+  assert.ok(requests.every(request => request.tools.every(tool => tool.function.name !== 'run_command')));
+  assert.ok(requests.every(request => typeof request.tool_choice !== 'object'));
+  assert.ok(!thread.messages.some(message => message.name === 'run_command'));
+  const result = thread.messages.at(-1);
+  assert.equal(result.work.status, 'incomplete');
+  assert.equal(result.work.verification, 'not-run');
+  assert.match(result.content, /Full local access/);
+}));
+
 test('a model that still refuses to act gets a bounded incomplete result, never a false success', () => fixture([
   text('Here is a tutorial.'), text('Do the steps yourself.'), text('Done! Everything was built.')
 ], async ({ root, agent, thread, requests }) => {
@@ -153,11 +174,56 @@ test('a later failing check prevents a completed status despite an earlier passi
   assert.equal(thread.messages.at(-1).work.verification, 'not-run');
 }));
 
+test('Research rejects a model-injected project write before touching the filesystem', () => fixture([
+  call('write_file',{path:'injected.txt',content:'must not write'}),text('No sources were retrieved.')
+],async({agent,store,thread,root,requests})=>{
+  store.data.settings.accessMode='full';
+  await agent.send({threadId:thread.id,text:'Find public information about Python.',mode:'agent',web:true});
+  await assert.rejects(fs.access(path.join(root,'injected.txt')));
+  assert.equal(thread.changes.length,0);
+  assert.ok(requests[0].tools.every(tool=>!['write_file','read_file','run_command','computer_act'].includes(tool.function.name)));
+  assert.equal(thread.messages.some(message=>message.role==='tool'),false);
+  assert.match(requests[1].messages[0].content,/was not executed/);
+}));
+
+test('Sandbox rejects model-injected computer input even when other file tools are available', () => fixture([
+  call('computer_act',{snapshot:'fake',element_id:1,action:'click'}),text('No action performed.')
+],async({agent,store,thread,requests})=>{
+  store.data.settings.accessMode='sandbox';
+  await agent.send({threadId:thread.id,text:'Say hello.',mode:'agent'});
+  assert.equal(thread.messages.some(message=>message.role==='tool'),false);
+  assert.match(requests[1].messages[0].content,/was not executed/);
+}));
+
+test('computer tasks expose only app tools and require a post-input observation', () => fixture([
+  call('computer_observe',{}),call('computer_act',{snapshot:'one',element_id:1,action:'type',text:'hello'}),call('computer_observe',{}),text('Updated and rechecked.')
+],async({agent,store,thread,requests})=>{
+  store.data.settings.accessMode='full';
+  agent.computer={allowed:()=>true,observe:async()=>({snapshot:'one',app:'demo',elements:[{id:1,name:'Note'}]}),act:async()=>({performed:true,approved:true,action:'type',app:'demo'})};
+  await agent.send({threadId:thread.id,text:'Type hello in the selected app.',mode:'agent'});
+  assert.deepEqual(requests[0].tools.map(tool=>tool.function.name),['computer_observe','computer_act']);
+  assert.equal(requests[0].max_tokens,700);
+  assert.equal(thread.messages.at(-1).work.computer.observedAfterAction,true);
+  assert.equal(thread.messages.at(-1).work.status,'completed');assert.equal(thread.changes.length,0);
+}));
+
 test('the tool-round limit produces an incomplete result card with the actual activity', () => fixture(
   Array.from({ length: 16 }, (_, i) => call('list_files', { path: '.' }, 'read-' + i)),
   async ({ agent, thread, requests }) => {
     await agent.send({ threadId: thread.id, text: 'Build a Node utility.', mode: 'agent' });
     assert.equal(requests.length, 16); assert.equal(thread.messages.at(-1).work.status, 'incomplete');
     assert.match(thread.messages.at(-1).content, /16-step limit/);
+  }
+));
+
+test('three identical tool failures stop the turn with the real error and no false completion', () => fixture(
+  Array.from({ length: 3 }, (_, i) => call('read_file', { path: 'missing.txt' }, 'missing-' + i)),
+  async ({ agent, thread, requests }) => {
+    await agent.send({ threadId: thread.id, text: 'Inspect missing.txt.', mode: 'agent' });
+    assert.equal(requests.length, 3);
+    assert.equal(thread.messages.at(-1).work.status, 'incomplete');
+    assert.match(thread.messages.at(-1).content, /same tool error occurred 3 times.*ENOENT/);
+    assert.equal(thread.changes.length, 0);
+    assert.equal(agent.active.size, 0);
   }
 ));

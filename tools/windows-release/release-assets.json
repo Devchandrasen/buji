@@ -1,0 +1,81 @@
+{
+  "model": {
+    "size": 5629109280,
+    "sha256": "96697b71cd5fe62513507e583a1c320154e3d5e67cd2d211b0f867db4fad877f",
+    "parts": [
+      {
+        "name": "Buji-V3-OmniCoder-Q4_K_M.part01",
+        "size": 1500000000,
+        "sha256": "cc6547662ee3848c6a06114bca65fb0a1769f6d604b2847912f79ac70029c84d",
+        "url": "https://github.com/Devchandrasen/buji/releases/download/v3.0.0-preview.1/Buji-V3-OmniCoder-Q4_K_M.part01"
+      },
+      {
+        "name": "Buji-V3-OmniCoder-Q4_K_M.part02",
+        "size": 1500000000,
+        "sha256": "83e8c8dbbecc9e5282b9dddfcfb5378223ffdf87a0c52ce6ee0d30b7a72fd5bf",
+        "url": "https://github.com/Devchandrasen/buji/releases/download/v3.0.0-preview.1/Buji-V3-OmniCoder-Q4_K_M.part02"
+      },
+      {
+        "name": "Buji-V3-OmniCoder-Q4_K_M.part03",
+        "size": 1500000000,
+        "sha256": "40b642783d3cd50e3d499999e727b40a65791b88675ca4d8e31ccf65164b886c",
+        "url": "https://github.com/Devchandrasen/buji/releases/download/v3.0.0-preview.1/Buji-V3-OmniCoder-Q4_K_M.part03"
+      },
+      {
+        "name": "Buji-V3-OmniCoder-Q4_K_M.part04",
+        "size": 1129109280,
+        "sha256": "0ec734c963cbe89b0ea1cc4eb2ef9185226f30cd6d1d6cbf744509b8bb7680c8",
+        "url": "https://github.com/Devchandrasen/buji/releases/download/v3.0.0-preview.1/Buji-V3-OmniCoder-Q4_K_M.part04"
+      }
+    ]
+  },
+  "visionRevision": "52d6c8ffea26cc873ac5ad116f8631268d7eb503",
+  "vision": [
+    {
+      "name": "Qwen3VL-2B-Instruct-Q4_K_M.gguf",
+      "size": 1107409952,
+      "sha256": "089d75c52f4b7ffc56ba998ffc50aae89fcafc755f9e7208aacca281dca6c2ae",
+      "url": "https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct-GGUF/resolve/52d6c8ffea26cc873ac5ad116f8631268d7eb503/Qwen3VL-2B-Instruct-Q4_K_M.gguf"
+    },
+    {
+      "name": "mmproj-Qwen3VL-2B-Instruct-Q8_0.gguf",
+      "size": 445053216,
+      "sha256": "f9a68fabba69c3b81e153367b2c7521030b0fa8bb0de400c9599c8e6725f9c82",
+      "url": "https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct-GGUF/resolve/52d6c8ffea26cc873ac5ad116f8631268d7eb503/mmproj-Qwen3VL-2B-Instruct-Q8_0.gguf"
+    }
+  ],
+  "cuda": [
+    {
+      "name": "llama-b12099-bin-win-cuda-12.4-x64.zip",
+      "size": 287012644,
+      "sha256": "6c45ab354ade102e96d344168598d552b1fb6f8b1cbb984753e4d0acaddee017",
+      "url": "https://github.com/ggml-org/llama.cpp/releases/download/b12099/llama-b12099-bin-win-cuda-12.4-x64.zip"
+    },
+    {
+      "name": "cudart-llama-bin-win-cuda-12.4-x64.zip",
+      "size": 391443627,
+      "sha256": "8c79a9b226de4b3cacfd1f83d24f962d0773be79f1e7b75c6af4ded7e32ae1d6",
+      "url": "https://github.com/ggml-org/llama.cpp/releases/download/b12099/cudart-llama-bin-win-cuda-12.4-x64.zip"
+    }
+  ],
+  "hindi": [
+    {
+      "name": "hi_IN-pratham-medium.onnx",
+      "size": 63516050,
+      "sha256": "169964b0871667f6793416d4b35e97357a68ba1ad01df8580c28048989ee7693",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/e7229f7d33a10e145e109b886d661984201ac3c4/hi/hi_IN/pratham/medium/hi_IN-pratham-medium.onnx"
+    },
+    {
+      "name": "hi_IN-pratham-medium.onnx.json",
+      "size": 4970,
+      "sha256": "b68edd2cd7950dd436314013b7cd12e9699e5a3f6fe5af5af94294cf6aa7b9fd",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/e7229f7d33a10e145e109b886d661984201ac3c4/hi/hi_IN/pratham/medium/hi_IN-pratham-medium.onnx.json"
+    },
+    {
+      "name": "MODEL_CARD",
+      "size": 304,
+      "sha256": "89cf491ea99e69b27c94599cecea3f0fc6aeacb30f4ccdb12897f659868df29e",
+      "url": "https://huggingface.co/rhasspy/piper-voices/resolve/e7229f7d33a10e145e109b886d661984201ac3c4/hi/hi_IN/pratham/medium/MODEL_CARD"
+    }
+  ]
+}

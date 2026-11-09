@@ -94,13 +94,25 @@ function compactMessages(messages, budget = 14000) {
   return selected;
 }
 async function complete(settings, messages, tools, signal, onText, options = {}) {
-  const response = await fetch(endpointUrl(settings.endpoint, '/chat/completions'), {
+  let response, failure = '', requestMessages = messages;
+  for (let attempt = 0; attempt < 3; attempt++) {
+  response = await fetch(endpointUrl(settings.endpoint, '/chat/completions'), {
     method: 'POST', redirect: 'error', headers: { 'Content-Type': 'application/json' }, signal,
-    body: JSON.stringify({ model: settings.model, messages, ...(tools.length ? { tools, tool_choice: options.toolChoice || 'auto' } : {}),
-      temperature: .25, top_p: .8, top_k: 20, max_tokens: 1800, stream: true,
+    body: JSON.stringify({ model: settings.model, messages: requestMessages, ...(tools.length ? { tools, tool_choice: options.toolChoice || 'auto' } : {}),
+      temperature: .25, top_p: .8, top_k: 20, max_tokens: options.maxTokens || 1800, stream: true,
       stream_options: { include_usage: true }, parallel_tool_calls: false })
   });
-  if (!response.ok) throw new Error((await response.text()).slice(0, 1500));
+  if (response.ok) break;
+  failure = (await response.text()).slice(0, 1500);
+  if (response.status !== 400 || !/context.*(?:size|length)|exceeds.*context/i.test(failure)) break;
+  const system = messages.filter(message => message.role === 'system');
+  const history = messages.filter(message => message.role !== 'system');
+  const smaller = [...system, ...compactMessages(history, Math.max(2200, 4500 - attempt * 1500))];
+  if (JSON.stringify(smaller).length >= JSON.stringify(requestMessages).length) break;
+  requestMessages = smaller;
+  }
+  if (!response.ok) throw new Error(/context.*(?:size|length)|exceeds.*context/i.test(failure)
+    ? 'The local model context is full. Shorten the current request or attached text; earlier tool history could not be reduced enough.' : failure);
   let content = '', buffer = '', timings = null, usage = null;
   const calls = new Map();
   const decoder = new TextDecoder();

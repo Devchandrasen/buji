@@ -1,0 +1,13 @@
+pillow==13.0.0
+typing_extensions==4.16.0
+winrt-runtime==4.1.0
+winrt-Windows.Foundation==4!10.0.28000.2957
+winrt-Windows.Foundation.Collections==4!10.0.28000.2957
+winrt-Windows.Graphics==4!10.0.28000.2957.1
+winrt-Windows.Graphics.Capture==4!10.0.28000.2957
+winrt-Windows.Graphics.Capture.Interop==4.0.0
+winrt-Windows.Graphics.DirectX==4!10.0.28000.2957.1
+winrt-Windows.Graphics.DirectX.Direct3D11==4!10.0.28000.2957
+winrt-Windows.Graphics.DirectX.Direct3D11.Interop==4.1.0
+winrt-Windows.Graphics.Imaging==4!10.0.28000.2957
+winrt-Windows.Storage.Streams==4!10.0.28000.2957

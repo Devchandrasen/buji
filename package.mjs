@@ -4,15 +4,18 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const manifest = JSON.parse(await fs.readFile(path.join(root, 'package.json'), 'utf8'));
+const v2 = process.argv.includes('--v2');
+const productName = v2 ? 'Buji V2' : 'Buji V1';
+const executableName = v2 ? 'BujiV2' : 'Buji';
 let workspaceRoot = root;
 for (let cursor = root; ; cursor = path.dirname(cursor)) {
   try { await fs.access(path.join(cursor, 'work')); await fs.access(path.join(cursor, 'outputs')); workspaceRoot = cursor; break; } catch {}
   if (path.dirname(cursor) === cursor) break;
 }
-const packagingWork = path.join(workspaceRoot, 'work', 'buji-packaging');
+const packagingWork = path.join(workspaceRoot, 'work', v2 ? 'buji-v2-packaging' : 'buji-packaging');
 const stage = path.join(packagingWork, 'stage');
 const packageOutput = path.join(packagingWork, 'packages');
-const deliverable = path.join(workspaceRoot, 'outputs', 'BujiV1');
+const deliverable = path.join(workspaceRoot, 'outputs', v2 ? 'BujiV2-Router' : 'BujiV1');
 const sourceCopyOptions = { recursive: true,
   filter: filename => path.basename(filename) !== '__pycache__' && !filename.endsWith('.pyc') };
 for (const candidate of [stage, packageOutput]) {
@@ -23,14 +26,14 @@ await fs.mkdir(stage, { recursive: true });
 await fs.mkdir(deliverable, { recursive: true });
 await fs.cp(path.join(root, 'dist'), path.join(stage, 'dist'), { recursive: true });
 await fs.writeFile(path.join(stage, 'package.json'), JSON.stringify({
-  name: 'buji', productName: 'Buji V1', version: manifest.version, main: 'dist/main.cjs',
-  description: 'Your local coding workspace, powered by Qwen3 Personal WSP' }, null, 2));
-const options = { dir: stage, out: packageOutput, name: 'Buji V1', executableName: 'Buji',
-  platform: 'win32', arch: 'x64', electronVersion: '45.2.2', asar: true,
+  name: v2 ? 'buji-v2' : 'buji', productName, version: manifest.version, main: 'dist/main.cjs',
+  description: v2 ? 'Your local coding workspace, powered by OmniCoder' : 'Your local coding workspace, powered by Qwen3 Personal WSP' }, null, 2));
+const options = { dir: stage, out: packageOutput, name: productName, executableName,
+  platform: 'win32', arch: 'x64', electronVersion: '45.2.2', asar: { unpack: '**/{computer-worker.ps1,visual-capture.py}' },
   icon: path.join(root, 'assets', 'buji.ico'), overwrite: true,
   appVersion: manifest.version, appCopyright: 'Copyright 2026 Dr Chandrasen Pandey and Buji contributors',
-  win32metadata: { CompanyName: 'Buji contributors', FileDescription: 'Buji V1 local coding desktop',
-    ProductName: 'Buji V1', InternalName: 'Buji V1', OriginalFilename: 'Buji.exe' } };
+  win32metadata: { CompanyName: 'Buji contributors', FileDescription: `${productName} local coding desktop`,
+    ProductName: productName, InternalName: productName, OriginalFilename: `${executableName}.exe` } };
 const zipName = 'electron-v45.2.2-win32-x64.zip';
 async function findZip(directory, depth = 0) {
   if (depth > 4) return null;
@@ -46,9 +49,14 @@ const cached = await findZip(path.join(process.env.LOCALAPPDATA, 'electron', 'Ca
 if (cached) {
   const cache = path.join(packagingWork, 'electron-zip-cache'); await fs.mkdir(cache, { recursive: true });
   await fs.copyFile(cached, path.join(cache, zipName)); options.electronZipDir = cache;
-} else options.download = { cacheRoot: path.join(packagingWork, 'electron-cache') };
+} else if (v2) throw new Error('The cached Electron Windows runtime is required for the offline V2 package.');
+else options.download = { cacheRoot: path.join(packagingWork, 'electron-cache') };
 console.log('Packaging in', packageOutput);
 const directories = await packager(options);
+if (v2 && process.argv.includes('--stage-only')) {
+  console.log('Staged:', path.join(directories[0], `${executableName}.exe`));
+  process.exit(0);
+}
 const destination = path.join(deliverable, 'app');
 try {
   await fs.access(destination);
@@ -58,6 +66,10 @@ try {
   await fs.rename(destination, previous);
 } catch (error) { if (error.code !== 'ENOENT') throw error; }
 await fs.cp(directories[0], destination, { recursive: true });
+if (v2) {
+  console.log('Ready:', path.join(destination, `${executableName}.exe`));
+  process.exit(0);
+}
 const source = path.join(deliverable, 'source'); await fs.mkdir(source, { recursive: true });
 if (path.resolve(root) !== path.resolve(source))
   for (const name of ['src', 'tests', 'assets', 'tools', 'docs', '.github', '.gitignore', '.gitattributes', 'LICENSE', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'CHANGELOG.md', 'ROADMAP.md', 'THIRD_PARTY_NOTICES.md', 'package.json', 'package-lock.json', 'build.mjs', 'package.mjs'])

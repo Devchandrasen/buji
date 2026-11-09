@@ -37,6 +37,8 @@ The following inventory is generated from the locked production dependencies. Fu
 | [lucide-react](docs/licenses/lucide-react-1.68.0.txt) | 1.68.0 | ISC |
 | [markdown-it](docs/licenses/markdown-it-15.0.3.txt) | 15.0.3 | MIT |
 | [mdurl](docs/licenses/mdurl-2.1.0.txt) | 2.1.0 | MIT |
+| [parse5](docs/licenses/parse5-8.0.0.txt) | 8.0.0 | MIT |
+| [entities](docs/licenses/entities-6.0.1.txt) | 6.0.1 | BSD-2-Clause |
 | punycode.js | 2.3.1 | MIT |
 | [react](docs/licenses/react-19.3.1.txt) | 19.3.1 | MIT |
 | [react-dom](docs/licenses/react-dom-19.3.1.txt) | 19.3.1 | MIT |
@@ -46,3 +48,5 @@ The following inventory is generated from the locked production dependencies. Fu
 | [w3c-keyname](docs/licenses/w3c-keyname-2.2.8.txt) | 2.2.8 | MIT |
 
 Electron and Chromium notices are included with the Windows runtime. The optional Qwen model recipe is described in `tools/model/README.md`; its base checkpoint is Apache-2.0. No model weights are part of the app repository.
+
+Optional visual computer-use components and their licenses are documented in [Visual runtime notices](docs/vision-third-party-notices.md).

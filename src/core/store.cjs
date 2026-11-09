@@ -17,7 +17,7 @@ function migrateLegacyData(destination, legacyDirectory) {
 }
 
 class Store {
-  constructor(directory) {
+  constructor(directory, { v2 = false } = {}) {
     this.directory = directory;
     fs.mkdirSync(directory, { recursive: true });
     this.filename = path.join(directory, 'workspace.json');
@@ -27,10 +27,13 @@ class Store {
         try { fs.copyFileSync(this.filename, this.filename + '.recovery-' + Date.now()); } catch {}
       }
       this.data = { version: 1, projects: [], threads: [], settings: {
-        endpoint: 'http://127.0.0.1:8088/v1', model: 'qwen3-personal-wsp',
+        endpoint: v2 ? (process.env.BUJI_RELEASE_ASSETS ? 'http://127.0.0.1:18093/v1' : 'http://127.0.0.1:8093/v1') : 'http://127.0.0.1:8088/v1', model: v2 ? 'buji-v2-routed' : 'qwen3-personal-wsp',
         backendScript: '', autoStartModel: true, approveCommands: true, theme: 'light' } };
     }
     this.data.settings = { approveCommands: true, autoStartModel: true, theme: 'light', ...this.data.settings };
+    if (v2 && this.data.settings.accessMode !== 'full') this.data.settings.accessMode = 'sandbox';
+    if (v2) this.data.settings = { voiceConversation: true, voiceLanguage: 'auto', voiceReplyLanguage: 'auto', voiceURI: '', ...this.data.settings };
+    if (v2 && !Array.isArray(this.data.lessons)) this.data.lessons = [];
   }
   save() {
     const temporary = this.filename + '.tmp';
