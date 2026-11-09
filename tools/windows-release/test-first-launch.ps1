@@ -29,7 +29,26 @@ try {
     try { Install-TextModel } catch { $failure = $_.Exception.Message }
     if ($failure -notlike $expected) { throw "Empty model cache preflight failed: $failure" }
     Write-Output "First-launch preflight passed for $($manifest.model.size) bytes."
+
+    foreach ($name in 'Get-AssetSha256', 'Get-VerifiedAsset') {
+        $functionAst = $ast.Find({
+            param($node)
+            $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
+        }, $true)
+        . ([scriptblock]::Create($functionAst.Extent.Text))
+    }
+    function Get-FileHash { throw 'The checksum cmdlet is unavailable.' }
+    [IO.File]::WriteAllText((Join-Path $assetDir 'probe.partial'), 'abc')
+    $asset = @{name='probe'; size=3; sha256='ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'}
+    if ((Get-VerifiedAsset $asset $assetDir) -ne (Join-Path $assetDir 'probe')) {
+        throw 'The already-downloaded asset could not be verified.'
+    }
+    Write-Output 'Resumed asset SHA-256 verified without the PowerShell hash cmdlet.'
 } finally {
     if (Test-Path -LiteralPath $partialDir) { Remove-Item -LiteralPath $partialDir }
+    foreach ($name in 'probe', 'probe.partial') {
+        $file = Join-Path $assetDir $name
+        if (Test-Path -LiteralPath $file) { Remove-Item -LiteralPath $file }
+    }
     Remove-Item -LiteralPath $assetDir
 }

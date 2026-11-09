@@ -1,6 +1,6 @@
 {
   "name": "buji",
-  "version": "3.0.0-preview.2",
+  "version": "3.0.0-preview.3",
   "private": true,
   "description": "A local-first personal alternative to Codex and Claude Cowork for coding and text-file work.",
   "main": "dist/main.cjs",

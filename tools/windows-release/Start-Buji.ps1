@@ -6,14 +6,23 @@ $manifest = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'release-assets.js
 $python = Join-Path $PSScriptRoot 'voice\hindi-runtime\Scripts\python.exe'
 $curl = Join-Path $env:WINDIR 'System32\curl.exe'
 
+function Get-AssetSha256([string]$path) {
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        $stream = [IO.File]::OpenRead($path)
+        try { return [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '').ToLowerInvariant() }
+        finally { $stream.Dispose() }
+    } finally { $sha.Dispose() }
+}
+
 function Get-VerifiedAsset($item, [string]$directory) {
     $target = Join-Path $directory $item.name
     if ((Test-Path -LiteralPath $target) -and (Get-Item -LiteralPath $target).Length -eq $item.size -and
-        (Get-FileHash -LiteralPath $target).Hash -eq $item.sha256) { return $target }
+        (Get-AssetSha256 $target) -eq $item.sha256) { return $target }
     $partial = "$target.partial"
     if ((Test-Path -LiteralPath $partial) -and (Get-Item -LiteralPath $partial).Length -ge $item.size) {
         if ((Get-Item -LiteralPath $partial).Length -eq $item.size -and
-            (Get-FileHash -LiteralPath $partial).Hash -eq $item.sha256) {
+            (Get-AssetSha256 $partial) -eq $item.sha256) {
             Move-Item -LiteralPath $partial -Destination $target -Force
             return $target
         }
@@ -22,7 +31,7 @@ function Get-VerifiedAsset($item, [string]$directory) {
     Write-Host ("Downloading {0} ({1:N1} MB)" -f $item.name, ($item.size / 1e6))
     & $curl --fail --location --retry 3 --connect-timeout 25 --proto '=https' --proto-redir '=https' --continue-at - --output $partial $item.url
     if ($LASTEXITCODE) { throw "Download interrupted. Open the same shortcut to resume $($item.name)." }
-    if ((Get-Item -LiteralPath $partial).Length -ne $item.size -or (Get-FileHash -LiteralPath $partial).Hash -ne $item.sha256) {
+    if ((Get-Item -LiteralPath $partial).Length -ne $item.size -or (Get-AssetSha256 $partial) -ne $item.sha256) {
         Remove-Item -LiteralPath $partial -Force
         throw "SHA-256 verification failed for $($item.name). Open the same shortcut to retry."
     }
@@ -40,7 +49,7 @@ function Install-TextModel {
     $modelSize = [long]$manifest.model.size
     if ((Test-Path -LiteralPath $model) -and (Get-Item -LiteralPath $model).Length -eq $modelSize) {
         if ((Test-Path -LiteralPath $stamp) -and (Get-Content -LiteralPath $stamp -Raw).Trim() -eq $manifest.model.sha256) { return }
-        if ((Get-FileHash -LiteralPath $model).Hash -eq $manifest.model.sha256) {
+        if ((Get-AssetSha256 $model) -eq $manifest.model.sha256) {
             Set-Content -LiteralPath $stamp -Value $manifest.model.sha256 -Encoding ascii
             return
         }
@@ -65,7 +74,7 @@ function Install-TextModel {
                 try { $inputStream.CopyTo($output, 4MB) } finally { $inputStream.Dispose() }
             }
         } finally { $output.Dispose() }
-        if ((Get-Item -LiteralPath $tempModel).Length -ne $modelSize -or (Get-FileHash -LiteralPath $tempModel).Hash -ne $manifest.model.sha256) {
+        if ((Get-Item -LiteralPath $tempModel).Length -ne $modelSize -or (Get-AssetSha256 $tempModel) -ne $manifest.model.sha256) {
             Remove-Item -LiteralPath $tempModel -Force
             throw 'The assembled model did not match the release checksum.'
         }

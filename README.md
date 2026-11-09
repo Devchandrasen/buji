@@ -2,7 +2,7 @@
 
 Buji is a local AI workspace for Windows from [CBN.Ai](https://devchandrasen.github.io/CBN.ai/). Open a folder to ask questions, make reviewable changes, and see the files and checks behind a result.
 
-[Download the Windows x64 preview](https://github.com/Devchandrasen/buji/releases/tag/v3.0.0-preview.2)
+[Download the Windows x64 preview](https://github.com/Devchandrasen/buji/releases/tag/v3.0.0-preview.3)
 
 - **Ask, Work, and Research.** Use local chat, work in a real project, or fetch current information from public web sources.
 - **Review actions.** Inspect proposed commands and diffs. Use project-scoped sandbox mode or opt into full local access. Undo supported edits.
