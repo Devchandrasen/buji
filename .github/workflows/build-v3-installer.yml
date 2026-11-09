@@ -29,6 +29,9 @@ jobs:
           python-version: '3.12'
       - run: npm ci
       - run: npm test
+      - name: Check first launch with an empty model cache
+        shell: powershell
+        run: .\tools\windows-release\test-first-launch.ps1
       - run: npm run build
       - name: Compile installer from source
         shell: pwsh

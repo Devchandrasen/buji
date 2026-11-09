@@ -37,7 +37,8 @@ function Install-Wheels([string]$requirements) {
 function Install-TextModel {
     $model = Join-Path $assetDir 'omni-parent-Q4_K_M.gguf'
     $stamp = "$model.sha256"
-    if ((Test-Path -LiteralPath $model) -and (Get-Item -LiteralPath $model).Length -eq $manifest.model.size) {
+    $modelSize = [long]$manifest.model.size
+    if ((Test-Path -LiteralPath $model) -and (Get-Item -LiteralPath $model).Length -eq $modelSize) {
         if ((Test-Path -LiteralPath $stamp) -and (Get-Content -LiteralPath $stamp -Raw).Trim() -eq $manifest.model.sha256) { return }
         if ((Get-FileHash -LiteralPath $model).Hash -eq $manifest.model.sha256) {
             Set-Content -LiteralPath $stamp -Value $manifest.model.sha256 -Encoding ascii
@@ -51,9 +52,9 @@ function Install-TextModel {
         $download = Get-VerifiedAsset $manifest.model.parts[0] $partialDir
         Move-Item -LiteralPath $download -Destination $model -Force
     } else {
-        $cached = (Get-ChildItem -LiteralPath $partialDir -File | Measure-Object Length -Sum).Sum
+        $cached = [long](Get-ChildItem -LiteralPath $partialDir -File | Measure-Object Length -Sum).Sum
         $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($assetDir))
-        $needed = $manifest.model.size + [Math]::Max(0, $manifest.model.size - $cached) + 300MB
+        $needed = $modelSize + [Math]::Max([long]0, $modelSize - $cached) + 300MB
         if ($drive.AvailableFreeSpace -lt $needed) { throw ('Setup needs {0:N1} GB free on {1}.' -f ($needed / 1e9), $drive.Name) }
         $parts = foreach ($part in $manifest.model.parts) { Get-VerifiedAsset $part $partialDir }
         $tempModel = "$model.assembling"
@@ -64,7 +65,7 @@ function Install-TextModel {
                 try { $inputStream.CopyTo($output, 4MB) } finally { $inputStream.Dispose() }
             }
         } finally { $output.Dispose() }
-        if ((Get-Item -LiteralPath $tempModel).Length -ne $manifest.model.size -or (Get-FileHash -LiteralPath $tempModel).Hash -ne $manifest.model.sha256) {
+        if ((Get-Item -LiteralPath $tempModel).Length -ne $modelSize -or (Get-FileHash -LiteralPath $tempModel).Hash -ne $manifest.model.sha256) {
             Remove-Item -LiteralPath $tempModel -Force
             throw 'The assembled model did not match the release checksum.'
         }
