@@ -29,10 +29,12 @@ def fetch(cache, name):
         return destination
     print(f"Downloading {name}", flush=True)
     partial = destination.with_suffix(destination.suffix + ".partial")
+    url = item["url"]
+    headers = ["--header", "Accept: application/octet-stream"] if url.startswith("https://api.github.com/") else []
     subprocess.run([
         "curl.exe", "--fail", "--location", "--proto", "=https",
         "--proto-redir", "=https", "--retry", "3", "--connect-timeout", "30",
-        "--output", str(partial), item["url"],
+        *headers, "--output", str(partial), url,
     ], check=True)
     if digest(partial) != item["sha256"]:
         raise ValueError(f"Unexpected SHA-256 for {name}")
