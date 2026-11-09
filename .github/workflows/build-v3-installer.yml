@@ -12,6 +12,8 @@ jobs:
   windows:
     runs-on: windows-2025
     timeout-minutes: 25
+    outputs:
+      artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
     env:
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     steps:
@@ -35,9 +37,31 @@ jobs:
             --cache "$env:RUNNER_TEMP\buji-inputs" `
             --output "$env:RUNNER_TEMP\buji-unsigned\Buji-V3-Setup-x64.exe"
       - name: Upload unsigned signing candidate
+        id: unsigned
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: Buji-V3-unsigned-installer
           path: ${{ runner.temp }}/buji-unsigned/Buji-V3-Setup-x64.exe
           if-no-files-found: error
           compression-level: 0
+
+  signpath:
+    needs: windows
+    if: github.ref == 'refs/heads/release/buji-v3-signpath' && github.sha == vars.BUJI_SIGNPATH_COMMIT
+    runs-on: windows-2025
+    timeout-minutes: 15
+    environment: buji-signpath
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Submit the GitHub Actions installer for release signing
+        uses: SignPath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_SLUG }}
+          github-artifact-id: ${{ needs.windows.outputs.artifact-id }}
+          wait-for-completion: false
