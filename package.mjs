@@ -8,9 +8,13 @@ const v2 = process.argv.includes('--v2');
 const productName = v2 ? 'Buji V2' : 'Buji V1';
 const executableName = v2 ? 'BujiV2' : 'Buji';
 let workspaceRoot = root;
-for (let cursor = root; ; cursor = path.dirname(cursor)) {
-  try { await fs.access(path.join(cursor, 'work')); await fs.access(path.join(cursor, 'outputs')); workspaceRoot = cursor; break; } catch {}
-  if (path.dirname(cursor) === cursor) break;
+if (v2 && process.argv.includes('--stage-only') && process.env.BUJI_PACKAGING_ROOT) {
+  workspaceRoot = path.resolve(process.env.BUJI_PACKAGING_ROOT);
+} else {
+  for (let cursor = root; ; cursor = path.dirname(cursor)) {
+    try { await fs.access(path.join(cursor, 'work')); await fs.access(path.join(cursor, 'outputs')); workspaceRoot = cursor; break; } catch {}
+    if (path.dirname(cursor) === cursor) break;
+  }
 }
 const packagingWork = path.join(workspaceRoot, 'work', v2 ? 'buji-v2-packaging' : 'buji-packaging');
 const stage = path.join(packagingWork, 'stage');
@@ -45,7 +49,7 @@ async function findZip(directory, depth = 0) {
   }
   return null;
 }
-const cached = await findZip(path.join(process.env.LOCALAPPDATA, 'electron', 'Cache'));
+const cached = process.env.BUJI_ELECTRON_ARCHIVE || await findZip(path.join(process.env.LOCALAPPDATA, 'electron', 'Cache'));
 if (cached) {
   const cache = path.join(packagingWork, 'electron-zip-cache'); await fs.mkdir(cache, { recursive: true });
   await fs.copyFile(cached, path.join(cache, zipName)); options.electronZipDir = cache;
